@@ -3,30 +3,48 @@ class FSM {
      * Creates new FSM instance.
      * @param config
      */
-    constructor(config) {}
-
+    constructor(config) {
+        if (!config) {return throwError};
+        this.config = config;
+        this.initial = config.initial;
+    }
+ 
     /**
      * Returns active state.
      * @returns {String}
      */
-    getState() {}
+    getState() {
+        return this.config.initial;
+    }
 
     /**
      * Goes to specified state.
      * @param state
      */
-    changeState(state) {}
+    changeState(state) {
+        this.config.states.hasOwnProperty(state) ? 
+        this.config.initial = state : (throwError (`The state ${state} isn't exist`));
+         
+        
+    }
 
     /**
      * Changes state according to event transition rules.
      * @param event
      */
-    trigger(event) {}
+
+    trigger(event) {
+
+        let influenceEvent =  this.config.states[`${this.config.initial}`].transitions[event];
+        this.changeState(influenceEvent);
+    }
 
     /**
      * Resets FSM state to initial.
      */
-    reset() {}
+    reset() {
+        this.changeState(this.initial);
+    }
 
     /**
      * Returns an array of states for which there are specified event transition rules.
@@ -34,14 +52,21 @@ class FSM {
      * @param event
      * @returns {Array}
      */
-    getStates(event) {}
+    getStates(event) {
+        let tempArr = Object.keys(this.config.states);
+
+        return (!event) ? tempArr : tempArr.filter(elem => this.config.states[elem].transitions[event]);
+   
+    }
 
     /**
      * Goes back to previous state.
      * Returns false if undo is not available.
      * @returns {Boolean}
      */
-    undo() {}
+    undo() {
+        
+    }
 
     /**
      * Goes redo to state.

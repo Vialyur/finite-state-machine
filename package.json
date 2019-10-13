@@ -4,7 +4,8 @@
     "description": "",
     "scripts": {
         "test": "mocha -r ./test/setup-mocha.js --colors",
-        "start": "webpack-dev-server"
+        "start": "webpack-dev-server",
+        "test-bail": "mocha -r ./test/setup-mocha.js --colors --bail"
     },
     "author": "humanamburu",
     "license": "ISC",

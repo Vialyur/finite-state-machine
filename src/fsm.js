@@ -1,20 +1,57 @@
+const config = {
+    initial: 'normal',
+    states: {
+        normal: {
+            transitions: {
+                study: 'busy',
+            }
+        },
+        busy: {
+            transitions: {
+                get_tired: 'sleeping',
+                get_hungry: 'hungry',
+            }
+        },
+        hungry: {
+            transitions: {
+                eat: 'normal'
+            },
+        },
+        sleeping: {
+            transitions: {
+                get_hungry: 'hungry',
+                get_up: 'normal',
+            },
+        },
+    }
+};
+
+
+
 class FSM {
     /**
      * Creates new FSM instance.
      * @param config
      */
     constructor(config) {
-        if (!config) {return throwError};
-        this.config = config;
-        this.initial = config.initial;
+        if (!config) {return throwError ('The config is not passed.')};
+        this._config = config;
+        this._state = config.initial;
+        this._historyArr = [];
+        this._historyElemIndex = -1;
+        
     }
+
+  
+
+
  
     /**
      * Returns active state.
      * @returns {String}
      */
     getState() {
-        return this.config.initial;
+        return this._state;
     }
 
     /**
@@ -22,8 +59,8 @@ class FSM {
      * @param state
      */
     changeState(state) {
-        this.config.states.hasOwnProperty(state) ? 
-        this.config.initial = state : (throwError (`The state ${state} isn't exist`));
+        this._config.states.hasOwnProperty(state) ? 
+        this._state = state : (throwError (`The state ${state} isn't exist`));
          
         
     }
@@ -35,7 +72,7 @@ class FSM {
 
     trigger(event) {
 
-        let influenceEvent =  this.config.states[`${this.config.initial}`].transitions[event];
+        let influenceEvent =  this._config.states[this._state].transitions[event];
         this.changeState(influenceEvent);
     }
 
@@ -43,7 +80,7 @@ class FSM {
      * Resets FSM state to initial.
      */
     reset() {
-        this.changeState(this.initial);
+        this.changeState(this._config.initial);
     }
 
     /**
@@ -53,19 +90,35 @@ class FSM {
      * @returns {Array}
      */
     getStates(event) {
-        let tempArr = Object.keys(this.config.states);
+        let tempArr = Object.keys(this._config.states);
 
-        return (!event) ? tempArr : tempArr.filter(elem => this.config.states[elem].transitions[event]);
+        return (!event) ? tempArr : tempArr.filter(elem => this._config.states[elem].transitions[event]);
    
     }
+
+
+
 
     /**
      * Goes back to previous state.
      * Returns false if undo is not available.
      * @returns {Boolean}
      */
+
+
+
+
+
     undo() {
+
+        if (this._historyElemIndex === -1) {
+            return false
+        };
         
+        this._historyElemIndex--;
+
+      return true;
+
     }
 
     /**
